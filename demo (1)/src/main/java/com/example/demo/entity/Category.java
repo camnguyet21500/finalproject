@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Table
-@Entity(name = "category")
+@Entity(name = "CATEGORY")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,9 +18,9 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
-    @Column(name = "category_type", length = 50, nullable = false)
+    @Column(name = "type", length = 50, nullable = false)
     private String type;
 
-    @Column(name = "category_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status;
 }

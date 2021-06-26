@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "product")
+@Table(name = "PRODUCT")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,19 +17,19 @@ public class Product {
     @Column(name = "product_id")
     private Long id;
 
-    @Column(name = "product_name", nullable = false, length = 80)
+    @Column(name = "name", nullable = false, length = 80)
     private String name;
 
-    @Column(name = "product_picture", nullable = true, columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "picture", nullable = true, columnDefinition = "VARCHAR(MAX)")
     private String picture;
 
-    @Column(name = "product_price", nullable = false)
+    @Column(name = "price", nullable = false)
     private Float price;
 
-    @Column(name = "product_status", nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @Column(name = "product_size", length = 80, nullable = false)
+    @Column(name = "size", length = 80, nullable = false)
     private String size;
 
     @ManyToOne()
