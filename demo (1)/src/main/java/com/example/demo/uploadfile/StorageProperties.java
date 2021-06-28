@@ -8,7 +8,7 @@ public class StorageProperties {
 	/**
 	 * Folder location for storing files
 	 */
-	private String location = "D:\\DuAn2\\LAYOUT\\ASM_FRONTEND_ADMIN\\image\\";
+	private String location = "D:\\DuAn2\\LAYOUT\\ASM_FRONTEND_ADMIN\\image";
 
 	public String getLocation() {
 		return location;

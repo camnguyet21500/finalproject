@@ -4,6 +4,7 @@ import com.example.demo.dto.ProductDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
 import com.example.demo.reponsitory.CategoryRepository;
+import com.example.demo.reponsitory.IProductRepo;
 import com.example.demo.service.IProductService;
 import com.example.demo.uploadfile.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class ProductController {
 
     @Autowired
     IProductService productService;
+
+    @Autowired
+    IProductRepo productRepo;
 
     @Autowired
     CategoryRepository categoryRepository;
@@ -46,36 +50,43 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public ResponseEntity<?> createProduct(@ModelAttribute ProductDTO product, @RequestParam("file") MultipartFile file) {
-        storageService.store(file);
-        System.out.println("You successfully uploaded " + file.getOriginalFilename() + "!");
-
+    public ResponseEntity<?> createProduct(@ModelAttribute ProductDTO product, @RequestParam(value ="file", required = false) MultipartFile file) {
         Category category = categoryRepository.findById(product.getCategoryID()).get();
         Product productEntity = new Product();
         productEntity.setId(product.getId());
         productEntity.setName(product.getName());
-        productEntity.setPicture(file.getOriginalFilename());
         productEntity.setPrice(product.getPrice());
         productEntity.setStatus(product.getStatus());
         productEntity.setSize(product.getSize());
         productEntity.setCategory(category);
+
+        if(file != null && !file.isEmpty()){
+            storageService.store(file);
+            productEntity.setPicture(file.getOriginalFilename());
+        }
+
 //
         Product newProduct = productService.createProduct(productEntity);
         return new ResponseEntity<>(newProduct, HttpStatus.OK);
     }
 
     @PutMapping("/products")
-    public ResponseEntity<?> updateProduct(@RequestBody ProductDTO product) {
+    public ResponseEntity<?> updateProduct(@ModelAttribute ProductDTO product, @RequestParam(value = "file", required = false) MultipartFile file) {
+        System.out.println(product);
 
         Category category = categoryRepository.findById(product.getCategoryID()).get();
         Product productEntity = new Product();
         productEntity.setId(product.getId());
         productEntity.setName(product.getName());
-        productEntity.setPicture(product.getPicture());
         productEntity.setPrice(product.getPrice());
         productEntity.setStatus(product.getStatus());
         productEntity.setSize(product.getSize());
         productEntity.setCategory(category);
+
+        if(file != null && !file.isEmpty()){
+            storageService.store(file);
+            productEntity.setPicture(file.getOriginalFilename());
+        }
 
 
         Product updateProduct = productService.updateProduct(productEntity);
@@ -84,10 +95,25 @@ public class ProductController {
 
     @DeleteMapping("/products/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-        if (productService.deleteProduct(id)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Product product = productRepo.findById(id).get();
+
+        product.setStatus(false);
+
+        productService.updateProduct(product);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/products/recover/{id}")
+    public ResponseEntity<?> recoverProduct(@PathVariable Long id) {
+
+        Product product = productRepo.findById(id).get();
+
+        product.setStatus(true);
+
+        productService.updateProduct(product);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
